@@ -1,0 +1,64 @@
+# Air Mobility News Aggregator Configuration
+
+# Search keywords for news collection
+keywords:
+  english:
+    - "eVTOL"
+    - "Flying Car"
+    - "Urban Air Mobility"
+    - "UAM"
+    - "Advanced Air Mobility"
+    - "AAM"
+    - "Helicopter Business"
+    - "Air Taxi"
+    - "Joby Aviation"
+    - "Lilium"
+    - "Archer Aviation"
+    - "Wisk Aero"
+    - "Vertical Aerospace"
+  japanese:
+    - "空飛ぶクルマ"
+    - "eVTOL"
+    - "エアモビリティ"
+    - "ヘリコプター事業"
+    - "エアタクシー"
+    - "都市型航空交通"
+    - "次世代航空モビリティ"
+
+# Google News RSS base URLs
+rss_sources:
+  google_news_global: "https://news.google.com/rss/search?q={keyword}&hl=en-US&gl=US&ceid=US:en"
+  google_news_japan: "https://news.google.com/rss/search?q={keyword}&hl=ja&gl=JP&ceid=JP:ja"
+
+# Filtering settings
+filtering:
+  # Only include articles from the last N hours
+  max_age_hours: 24
+  # Minimum title similarity threshold for deduplication (0.0 - 1.0)
+  title_similarity_threshold: 0.8
+
+# AI processing settings
+ai:
+  # Enable AI summarization (requires API key)
+  enabled: true
+  # AI provider: "openai" or "anthropic"
+  provider: "openai"
+  # Model to use
+  openai_model: "gpt-4o-mini"
+  anthropic_model: "claude-3-haiku-20240307"
+  # Maximum articles to process with AI (to control costs)
+  max_articles_to_process: 50
+
+# Output settings
+output:
+  # Directory for generated reports
+  directory: "output"
+  # Report filename template (supports {date} placeholder)
+  filename_template: "daily_report_{date}.md"
+
+# Article categories
+categories:
+  - "技術"
+  - "規制"
+  - "ビジネス"
+  - "その他"
