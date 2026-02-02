@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}エアモビリティ ニュース - ホーム{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>エアモビリティ ニュース</h1>
+    <p class="subtitle">eVTOL・空飛ぶクルマ・UAMの最新ニュースを毎日お届け</p>
+    <div class="stats">
+        <span class="stat-item">
+            <span class="stat-number">{{ total_count }}</span>
+            <span class="stat-label">件の記事</span>
+        </span>
+        <button class="refresh-btn">更新</button>
+    </div>
+</div>
+
+{% if top_stories %}
+<section class="section top-stories">
+    <h2 class="section-title">
+        <span class="section-icon">&#128293;</span>
+        注目ニュース
+    </h2>
+    <div class="top-stories-grid">
+        {% for article in top_stories %}
+        <a href="/article/{{ article.id }}" class="top-story-card">
+            <div class="card-header">
+                <span class="importance importance-{{ article.importance_score }}">
+                    {{ article.importance_score|importance_stars }}
+                </span>
+                <span class="category-badge" style="background-color: {{ category_info[article.category].color if article.category in category_info else '#6b7280' }}20; color: {{ category_info[article.category].color if article.category in category_info else '#6b7280' }}">
+                    {{ article.category }}
+                </span>
+            </div>
+            <h3 class="card-title">{{ article.title_ja or article.title }}</h3>
+            <div class="card-meta">
+                <span class="source">{{ article.source }}</span>
+                <span class="date">{{ article.published_date|format_date }}</span>
+            </div>
+            {% if article.summary_ja %}
+            <p class="card-summary">{{ article.summary_ja|replace('\n', ' ')|truncate(100) }}</p>
+            {% endif %}
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="section categories-section">
+    <h2 class="section-title">
+        <span class="section-icon">&#128194;</span>
+        カテゴリー別ニュース
+    </h2>
+    <div class="categories-grid">
+        {% for cat in categories %}
+        <div class="category-card">
+            <div class="category-header" style="border-color: {{ cat.info.color }}">
+                <a href="/category/{{ cat.name }}" class="category-link">
+                    <h3 class="category-name" style="color: {{ cat.info.color }}">
+                        {{ cat.name }}
+                        <span class="category-name-en">{{ cat.info.name_en }}</span>
+                    </h3>
+                    <span class="category-count">{{ cat.count }}件</span>
+                </a>
+            </div>
+            <ul class="article-list">
+                {% for article in cat.articles[:3] %}
+                <li class="article-item">
+                    <a href="/article/{{ article.id }}" class="article-link">
+                        <span class="importance-mini">{{ article.importance_score|importance_stars }}</span>
+                        <span class="article-title">{{ article.title_ja or article.title }}</span>
+                    </a>
+                    <div class="article-meta-mini">
+                        <span>{{ article.source }}</span>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% if cat.count > 3 %}
+            <a href="/category/{{ cat.name }}" class="view-all-link">
+                すべて見る ({{ cat.count }}件) &rarr;
+            </a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

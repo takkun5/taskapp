@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}エアモビリティ ニュース{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <span class="logo-icon">&#9992;</span>
+                <span class="logo-text">Air Mobility News</span>
+            </a>
+            <nav class="nav">
+                <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">ホーム</a>
+                <a href="/category/技術" class="nav-link {% if '/category/技術' in request.path %}active{% endif %}">技術</a>
+                <a href="/category/規制" class="nav-link {% if '/category/規制' in request.path %}active{% endif %}">規制</a>
+                <a href="/category/ビジネス" class="nav-link {% if '/category/ビジネス' in request.path %}active{% endif %}">ビジネス</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Air Mobility News Aggregator</p>
+            <p class="footer-info">最終更新: {{ last_update if last_update else 'N/A' }}</p>
+        </div>
+    </footer>
+
+    <script>
+        // Refresh button functionality
+        document.querySelectorAll('.refresh-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                btn.disabled = true;
+                btn.textContent = '更新中...';
+                try {
+                    const response = await fetch('/api/refresh', { method: 'POST' });
+                    const data = await response.json();
+                    if (data.success) {
+                        location.reload();
+                    }
+                } catch (e) {
+                    alert('更新に失敗しました');
+                    btn.disabled = false;
+                    btn.textContent = '更新';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title_ja or article.title }} - エアモビリティ ニュース{% endblock %}
+
+{% block content %}
+<article class="article-detail">
+    <nav class="breadcrumb">
+        <a href="/">ホーム</a> &gt;
+        <a href="/category/{{ article.category }}">{{ article.category }}</a> &gt;
+        <span>記事詳細</span>
+    </nav>
+
+    <header class="article-header">
+        <div class="article-badges">
+            <span class="importance-badge importance-{{ article.importance_score }}">
+                重要度: {{ article.importance_score|importance_stars }}
+            </span>
+            <span class="category-badge" style="background-color: {{ category_info.color }}20; color: {{ category_info.color }}">
+                {{ article.category }}
+            </span>
+            <span class="language-badge">
+                {{ '日本語' if article.language == 'ja' else '英語' }}
+            </span>
+        </div>
+
+        <h1 class="article-title">{{ article.title_ja or article.title }}</h1>
+
+        {% if article.language == 'en' and article.title_ja %}
+        <p class="original-title">原題: {{ article.title }}</p>
+        {% endif %}
+
+        <div class="article-meta">
+            <div class="meta-item">
+                <span class="meta-label">ソース</span>
+                <span class="meta-value">{{ article.source }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">公開日時</span>
+                <span class="meta-value">{{ article.published_date|format_date }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">キーワード</span>
+                <span class="meta-value keyword-tag">{{ article.keyword_matched }}</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="article-body">
+        {% if article.summary_ja %}
+        <section class="summary-section">
+            <h2>要約</h2>
+            <div class="summary-content">
+                {% for line in article.summary_ja.split('\n') %}
+                <p>{{ line }}</p>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if article.snippet %}
+        <section class="snippet-section">
+            <h2>概要</h2>
+            <p class="snippet-content">{{ article.snippet }}</p>
+        </section>
+        {% endif %}
+
+        <section class="action-section">
+            <a href="{{ article.url }}" target="_blank" rel="noopener noreferrer" class="read-original-btn">
+                元記事を読む &rarr;
+            </a>
+        </section>
+    </div>
+
+    <footer class="article-footer">
+        <a href="/category/{{ article.category }}" class="back-link">
+            &larr; {{ article.category }}カテゴリーに戻る
+        </a>
+    </footer>
+</article>
+{% endblock %}

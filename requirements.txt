@@ -6,6 +6,9 @@ pyyaml>=6.0.1
 # Environment variable management
 python-dotenv>=1.0.0
 
+# Web application
+flask>=3.0.0
+
 # AI APIs (optional - for summarization)
 openai>=1.0.0
 anthropic>=0.18.0

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category_name }} - エアモビリティ ニュース{% endblock %}
+
+{% block content %}
+<div class="page-header category-page-header" style="border-left-color: {{ category_info.color }}">
+    <nav class="breadcrumb">
+        <a href="/">ホーム</a> &gt; <span>{{ category_name }}</span>
+    </nav>
+    <h1 style="color: {{ category_info.color }}">{{ category_name }}</h1>
+    <p class="subtitle">{{ category_info.name_en }} - {{ total_count }}件の記事</p>
+</div>
+
+<section class="section">
+    {% if articles %}
+    <div class="articles-list-full">
+        {% for article in articles %}
+        <a href="/article/{{ article.id }}" class="article-card-full">
+            <div class="article-card-importance" style="background-color: {{ category_info.color }}">
+                {{ article.importance_score|importance_stars }}
+            </div>
+            <div class="article-card-content">
+                <h3 class="article-card-title">{{ article.title_ja or article.title }}</h3>
+                <div class="article-card-meta">
+                    <span class="source">{{ article.source }}</span>
+                    <span class="separator">|</span>
+                    <span class="date">{{ article.published_date|format_date }}</span>
+                    <span class="separator">|</span>
+                    <span class="keyword">{{ article.keyword_matched }}</span>
+                </div>
+                {% if article.summary_ja %}
+                <p class="article-card-summary">{{ article.summary_ja|replace('\n', ' ') }}</p>
+                {% elif article.snippet %}
+                <p class="article-card-summary">{{ article.snippet|truncate(200) }}</p>
+                {% endif %}
+            </div>
+            <div class="article-card-arrow">&rarr;</div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>このカテゴリーには記事がありません。</p>
+        <a href="/" class="back-link">&larr; ホームに戻る</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
