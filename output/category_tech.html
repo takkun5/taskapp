@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技術 - エアモビリティ ニュース</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <span class="logo-icon">&#9992;</span>
+                <span class="logo-text">Air Mobility News</span>
+            </a>
+            <nav class="nav">
+                <a href="/" class="nav-link ">ホーム</a>
+                <a href="/category/技術" class="nav-link active">技術</a>
+                <a href="/category/規制" class="nav-link ">規制</a>
+                <a href="/category/ビジネス" class="nav-link ">ビジネス</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            
+<div class="page-header category-page-header" style="border-left-color: #3b82f6">
+    <nav class="breadcrumb">
+        <a href="/">ホーム</a> &gt; <span>技術</span>
+    </nav>
+    <h1 style="color: #3b82f6">技術</h1>
+    <p class="subtitle">Technology - 3件の記事</p>
+</div>
+
+<section class="section">
+    
+    <div class="articles-list-full">
+        
+        <a href="/article/d904fd11fe33" class="article-card-full">
+            <div class="article-card-importance" style="background-color: #3b82f6">
+                ★★★★
+            </div>
+            <div class="article-card-content">
+                <h3 class="article-card-title">新型バッテリー技術でeVTOL航続距離500kmを実現へ</h3>
+                <div class="article-card-meta">
+                    <span class="source">IEEE Spectrum</span>
+                    <span class="separator">|</span>
+                    <span class="date">2026/02/02 00:28</span>
+                    <span class="separator">|</span>
+                    <span class="keyword">eVTOL</span>
+                </div>
+                
+                <p class="article-card-summary">・新型固体電池技術を開発 ・eVTOL機の航続距離500kmを達成可能に ・実用化に向けた技術的ブレイクスルー</p>
+                
+            </div>
+            <div class="article-card-arrow">&rarr;</div>
+        </a>
+        
+        <a href="/article/1f3cd08ee02b" class="article-card-full">
+            <div class="article-card-importance" style="background-color: #3b82f6">
+                ★★★
+            </div>
+            <div class="article-card-content">
+                <h3 class="article-card-title">Lilium Jetが量産機で完全遷移飛行に成功</h3>
+                <div class="article-card-meta">
+                    <span class="source">TechCrunch</span>
+                    <span class="separator">|</span>
+                    <span class="date">2026/02/02 12:28</span>
+                    <span class="separator">|</span>
+                    <span class="keyword">eVTOL</span>
+                </div>
+                
+                <p class="article-card-summary">・量産仕様機による完全遷移飛行に成功 ・独自の電動ジェット推進システムの実用性を実証 ・認証取得に向けた技術的進展</p>
+                
+            </div>
+            <div class="article-card-arrow">&rarr;</div>
+        </a>
+        
+        <a href="/article/e59887418239" class="article-card-full">
+            <div class="article-card-importance" style="background-color: #3b82f6">
+                ★★★
+            </div>
+            <div class="article-card-content">
+                <h3 class="article-card-title">Wisk Aeroが新型自律飛行エアタクシーを発表</h3>
+                <div class="article-card-meta">
+                    <span class="source">Forbes</span>
+                    <span class="separator">|</span>
+                    <span class="date">2026/02/02 08:28</span>
+                    <span class="separator">|</span>
+                    <span class="keyword">Air Taxi</span>
+                </div>
+                
+                <p class="article-card-summary">・ボーイング支援のWisk Aeroが新設計を発表 ・安全システムの強化と航続距離の延長 ・都市部運航に特化した設計</p>
+                
+            </div>
+            <div class="article-card-arrow">&rarr;</div>
+        </a>
+        
+    </div>
+    
+</section>
+
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Air Mobility News Aggregator</p>
+            <p class="footer-info">最終更新: N/A</p>
+        </div>
+    </footer>
+
+    <script>
+        // Refresh button functionality
+        document.querySelectorAll('.refresh-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                btn.disabled = true;
+                btn.textContent = '更新中...';
+                try {
+                    const response = await fetch('/api/refresh', { method: 'POST' });
+                    const data = await response.json();
+                    if (data.success) {
+                        location.reload();
+                    }
+                } catch (e) {
+                    alert('更新に失敗しました');
+                    btn.disabled = false;
+                    btn.textContent = '更新';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

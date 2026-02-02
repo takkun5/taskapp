@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>エアモビリティ ニュース</title>
+<style>/* Base Styles */
+:root {
+    --color-primary: #0ea5e9;
+    --color-tech: #3b82f6;
+    --color-regulation: #8b5cf6;
+    --color-business: #10b981;
+    --color-other: #6b7280;
+    --color-bg: #f8fafc;
+    --color-card: #ffffff;
+    --color-text: #1e293b;
+    --color-text-secondary: #64748b;
+    --color-border: #e2e8f0;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --radius: 8px;
+    --radius-lg: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Header */
+.header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+    color: white;
+    padding: 16px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-md);
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.logo-icon {
+    font-size: 1.5rem;
+}
+
+.nav {
+    display: flex;
+    gap: 8px;
+}
+
+.nav-link {
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    transition: background-color 0.2s;
+    font-size: 0.9rem;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Main Content */
+.main {
+    padding: 40px 0;
+    min-height: calc(100vh - 180px);
+}
+
+/* Page Header */
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.stat-label {
+    color: var(--color-text-secondary);
+}
+
+.refresh-btn {
+    padding: 8px 20px;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.refresh-btn:hover {
+    background-color: #0284c7;
+}
+
+.refresh-btn:disabled {
+    background-color: var(--color-text-secondary);
+    cursor: not-allowed;
+}
+
+/* Section */
+.section {
+    margin-bottom: 40px;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.section-icon {
+    font-size: 1.5rem;
+}
+
+/* Top Stories */
+.top-stories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.top-story-card {
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: block;
+}
+
+.top-story-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.importance {
+    color: #f59e0b;
+    font-size: 0.9rem;
+}
+
+.category-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.card-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 10px;
+}
+
+.card-summary {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+/* Categories Grid */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.category-card {
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.category-header {
+    padding: 16px 20px;
+    border-left: 4px solid;
+    background: linear-gradient(to right, rgba(0,0,0,0.02), transparent);
+}
+
+.category-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.category-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.category-name-en {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 400;
+    opacity: 0.7;
+}
+
+.category-count {
+    background: var(--color-bg);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+}
+
+.article-list {
+    list-style: none;
+    padding: 0 20px;
+}
+
+.article-item {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.article-item:last-child {
+    border-bottom: none;
+}
+
+.article-link {
+    display: block;
+}
+
+.importance-mini {
+    color: #f59e0b;
+    font-size: 0.7rem;
+    margin-right: 6px;
+}
+
+.article-title {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.article-link:hover .article-title {
+    color: var(--color-primary);
+}
+
+.article-meta-mini {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    margin-top: 4px;
+    padding-left: 20px;
+}
+
+.view-all-link {
+    display: block;
+    padding: 12px 20px;
+    text-align: center;
+    color: var(--color-primary);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--color-border);
+    transition: background-color 0.2s;
+}
+
+.view-all-link:hover {
+    background-color: var(--color-bg);
+}
+
+/* Category Page */
+.category-page-header {
+    text-align: left;
+    padding-left: 20px;
+    border-left: 4px solid;
+}
+
+.breadcrumb {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 10px;
+}
+
+.breadcrumb a:hover {
+    color: var(--color-primary);
+}
+
+.articles-list-full {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.article-card-full {
+    display: flex;
+    align-items: stretch;
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s;
+}
+
+.article-card-full:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.article-card-importance {
+    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.article-card-content {
+    flex: 1;
+    padding: 20px;
+}
+
+.article-card-title {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.article-card-meta {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 10px;
+}
+
+.separator {
+    margin: 0 8px;
+}
+
+.article-card-summary {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+.article-card-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    color: var(--color-text-secondary);
+    font-size: 1.2rem;
+}
+
+/* Article Detail */
+.article-detail {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.article-header {
+    margin-bottom: 30px;
+}
+
+.article-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.importance-badge {
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.language-badge {
+    padding: 6px 12px;
+    background: var(--color-bg);
+    color: var(--color-text-secondary);
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+}
+
+.article-title {
+    font-size: 1.75rem;
+    line-height: 1.3;
+    margin-bottom: 12px;
+}
+
+.original-title {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    font-style: italic;
+    margin-bottom: 16px;
+}
+
+.article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 16px;
+    background: var(--color-bg);
+    border-radius: var(--radius);
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.meta-label {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+}
+
+.meta-value {
+    font-weight: 500;
+}
+
+.keyword-tag {
+    background: var(--color-primary);
+    color: white;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+.article-body {
+    background: var(--color-card);
+    padding: 30px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.article-body h2 {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.summary-section {
+    margin-bottom: 30px;
+}
+
+.summary-content {
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    padding: 20px;
+    border-radius: var(--radius);
+    border-left: 4px solid var(--color-primary);
+}
+
+.summary-content p {
+    margin-bottom: 8px;
+}
+
+.summary-content p:last-child {
+    margin-bottom: 0;
+}
+
+.snippet-section {
+    margin-bottom: 30px;
+}
+
+.snippet-content {
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+}
+
+.action-section {
+    text-align: center;
+    padding-top: 20px;
+}
+
+.read-original-btn {
+    display: inline-block;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, var(--color-primary), #0284c7);
+    color: white;
+    border-radius: var(--radius);
+    font-weight: 500;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.read-original-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.article-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
+}
+
+.back-link {
+    color: var(--color-primary);
+    font-size: 0.9rem;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* Error Page */
+.error-page {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.error-page h1 {
+    font-size: 6rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+}
+
+.error-page p {
+    font-size: 1.25rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 24px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--color-text-secondary);
+}
+
+/* Footer */
+.footer {
+    background: #1e293b;
+    color: #94a3b8;
+    padding: 24px 0;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.footer-info {
+    margin-top: 8px;
+    font-size: 0.8rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header .container {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .page-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .top-stories-grid,
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .article-card-full {
+        flex-direction: column;
+    }
+
+    .article-card-importance {
+        width: 100%;
+        height: 40px;
+    }
+
+    .article-meta {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .article-title {
+        font-size: 1.25rem;
+    }
+}
+</style>
+</head>
+<body>
+<header class="header"><div class="container">
+<a href="#" class="logo"><span class="logo-icon">✈</span><span class="logo-text">Air Mobility News</span></a>
+<nav class="nav">
+<a href="#" class="nav-link active">ホーム</a>
+<a href="#tech" class="nav-link">技術</a>
+<a href="#reg" class="nav-link">規制</a>
+<a href="#biz" class="nav-link">ビジネス</a>
+</nav>
+</div></header>
+<main class="main"><div class="container">
+<div class="page-header">
+<h1>エアモビリティ ニュース</h1>
+<p class="subtitle">eVTOL・空飛ぶクルマ・UAMの最新ニュース</p>
+<div class="stats"><span class="stat-item"><span class="stat-number">10</span><span class="stat-label">件の記事</span></span></div>
+</div>
+
+<section class="section top-stories">
+<h2 class="section-title"><span class="section-icon">🔥</span>注目ニュース</h2>
+<div class="top-stories-grid">
+<div class="top-story-card">
+<div class="card-header"><span class="importance">★★★★★</span>
+<span class="category-badge" style="background:#8b5cf620;color:#8b5cf6">規制</span></div>
+<h3 class="card-title">Joby AviationがFAA型式証明を取得</h3>
+<div class="card-meta"><span class="source">Aviation Today</span></div>
+<p class="card-summary">・FAA型式証明取得 ・歴史的マイルストーン ・商業運航に前進</p>
+</div><div class="top-story-card">
+<div class="card-header"><span class="importance">★★★★</span>
+<span class="category-badge" style="background:#10b98120;color:#10b981">ビジネス</span></div>
+<h3 class="card-title">Archer Aviationが5億ドル投資獲得</h3>
+<div class="card-meta"><span class="source">Bloomberg</span></div>
+<p class="card-summary">・5億ドルの大型投資 ・エアタクシー事業拡大 ・航空会社参入加速</p>
+</div><div class="top-story-card">
+<div class="card-header"><span class="importance">★★★★</span>
+<span class="category-badge" style="background:#10b98120;color:#10b981">ビジネス</span></div>
+<h3 class="card-title">空飛ぶクルマ、大阪万博運航へ</h3>
+<div class="card-meta"><span class="source">日経新聞</span></div>
+<p class="card-summary">・万博での商用運航 ・安全基準確認 ・実用化の象徴</p>
+</div><div class="top-story-card">
+<div class="card-header"><span class="importance">★★★★</span>
+<span class="category-badge" style="background:#8b5cf620;color:#8b5cf6">規制</span></div>
+<h3 class="card-title">国交省、運航ルール策定へ</h3>
+<div class="card-meta"><span class="source">NHK</span></div>
+<p class="card-summary">・有識者会議設置 ・ルール策定 ・制度整備本格化</p>
+</div><div class="top-story-card">
+<div class="card-header"><span class="importance">★★★★</span>
+<span class="category-badge" style="background:#3b82f620;color:#3b82f6">技術</span></div>
+<h3 class="card-title">新バッテリーで航続500km</h3>
+<div class="card-meta"><span class="source">IEEE Spectrum</span></div>
+<p class="card-summary">・固体電池開発 ・500km達成 ・技術突破</p>
+</div></div></section><section class="section" id="tech">
+<h2 class="section-title" style="color:#3b82f6">🔧 技術</h2>
+<div class="articles-list-full"><div class="article-card-full">
+<div class="article-card-importance" style="background:#3b82f6">★★★★</div>
+<div class="article-card-content">
+<h3 class="article-card-title">新バッテリーで航続500km</h3>
+<div class="article-card-meta"><span class="source">IEEE Spectrum</span></div>
+<p class="article-card-summary">・固体電池開発 ・500km達成 ・技術突破</p>
+</div></div><div class="article-card-full">
+<div class="article-card-importance" style="background:#3b82f6">★★★</div>
+<div class="article-card-content">
+<h3 class="article-card-title">Lilium Jet遷移飛行成功</h3>
+<div class="article-card-meta"><span class="source">TechCrunch</span></div>
+<p class="article-card-summary">・遷移飛行成功 ・推進システム実証 ・技術進展</p>
+</div></div><div class="article-card-full">
+<div class="article-card-importance" style="background:#3b82f6">★★★</div>
+<div class="article-card-content">
+<h3 class="article-card-title">Wisk Aero新設計発表</h3>
+<div class="article-card-meta"><span class="source">Forbes</span></div>
+<p class="article-card-summary">・新設計発表 ・安全性向上 ・都市運航特化</p>
+</div></div></div></section><section class="section" id="reg">
+<h2 class="section-title" style="color:#8b5cf6">📋 規制</h2>
+<div class="articles-list-full"><div class="article-card-full">
+<div class="article-card-importance" style="background:#8b5cf6">★★★★★</div>
+<div class="article-card-content">
+<h3 class="article-card-title">Joby AviationがFAA型式証明を取得</h3>
+<div class="article-card-meta"><span class="source">Aviation Today</span></div>
+<p class="article-card-summary">・FAA型式証明取得 ・歴史的マイルストーン ・商業運航に前進</p>
+</div></div><div class="article-card-full">
+<div class="article-card-importance" style="background:#8b5cf6">★★★★</div>
+<div class="article-card-content">
+<h3 class="article-card-title">国交省、運航ルール策定へ</h3>
+<div class="article-card-meta"><span class="source">NHK</span></div>
+<p class="article-card-summary">・有識者会議設置 ・ルール策定 ・制度整備本格化</p>
+</div></div><div class="article-card-full">
+<div class="article-card-importance" style="background:#8b5cf6">★★★</div>
+<div class="article-card-content">
+<h3 class="article-card-title">EASAがUAM規制更新</h3>
+<div class="article-card-meta"><span class="source">FlightGlobal</span></div>
+<p class="article-card-summary">・新ガイドライン ・認証道筋明確化 ・欧州制度進展</p>
+</div></div></div></section><section class="section" id="biz">
+<h2 class="section-title" style="color:#10b981">💼 ビジネス</h2>
+<div class="articles-list-full"><div class="article-card-full">
+<div class="article-card-importance" style="background:#10b981">★★★★</div>
+<div class="article-card-content">
+<h3 class="article-card-title">Archer Aviationが5億ドル投資獲得</h3>
+<div class="article-card-meta"><span class="source">Bloomberg</span></div>
+<p class="article-card-summary">・5億ドルの大型投資 ・エアタクシー事業拡大 ・航空会社参入加速</p>
+</div></div><div class="article-card-full">
+<div class="article-card-importance" style="background:#10b981">★★★★</div>
+<div class="article-card-content">
+<h3 class="article-card-title">空飛ぶクルマ、大阪万博運航へ</h3>
+<div class="article-card-meta"><span class="source">日経新聞</span></div>
+<p class="article-card-summary">・万博での商用運航 ・安全基準確認 ・実用化の象徴</p>
+</div></div><div class="article-card-full">
+<div class="article-card-importance" style="background:#10b981">★★★★</div>
+<div class="article-card-content">
+<h3 class="article-card-title">SkyDrive-Suzuki提携</h3>
+<div class="article-card-meta"><span class="source">Reuters</span></div>
+<p class="article-card-summary">・生産提携発表 ・量産体制構築 ・2025年運航目標</p>
+</div></div><div class="article-card-full">
+<div class="article-card-importance" style="background:#10b981">★★★</div>
+<div class="article-card-content">
+<h3 class="article-card-title">ヘリ大手、eVTOL参入</h3>
+<div class="article-card-meta"><span class="source">Aviation Wire</span></div>
+<p class="article-card-summary">・eVTOL市場参入 ・技術活用 ・相乗効果</p>
+</div></div></div></section></div></main>
+<footer class="footer"><div class="container"><p>© 2024 Air Mobility News Aggregator</p></div></footer>
+</body></html>
