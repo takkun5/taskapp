@@ -1,23 +1,11 @@
 # Air Mobility News Aggregator - Dependencies
 
-# RSS feed parsing
-feedparser>=6.0.10
-
-# HTTP requests
-requests>=2.31.0
+# Configuration file parsing
+pyyaml>=6.0.1
 
 # Environment variable management
 python-dotenv>=1.0.0
 
-# Configuration file parsing
-pyyaml>=6.0.1
-
-# Data handling
-pandas>=2.0.0
-
 # AI APIs (optional - for summarization)
 openai>=1.0.0
 anthropic>=0.18.0
-
-# Date/time handling
-python-dateutil>=2.8.2

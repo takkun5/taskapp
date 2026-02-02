@@ -3,17 +3,20 @@ RSS Feed Fetcher Module
 
 Fetches news articles from Google News RSS feeds based on configured keywords.
 Handles filtering by date and deduplication of articles.
+Uses standard library for RSS parsing (no feedparser dependency).
 """
 
-import feedparser
-import requests
+import urllib.request
+import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from typing import Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from urllib.parse import quote
+from email.utils import parsedate_to_datetime
 import hashlib
 import re
 import time
+import ssl
 
 
 @dataclass
@@ -72,10 +75,8 @@ class NewsFetcher:
         self.max_age_hours = self.filtering.get("max_age_hours", 24)
         self.similarity_threshold = self.filtering.get("title_similarity_threshold", 0.8)
 
-        # User agent for requests
-        self.headers = {
-            "User-Agent": "Mozilla/5.0 (compatible; AirMobilityNewsBot/1.0)"
-        }
+        # SSL context for HTTPS requests
+        self.ssl_context = ssl.create_default_context()
 
     def fetch_all(self) -> list[Article]:
         """
@@ -89,6 +90,7 @@ class NewsFetcher:
         # Fetch English articles
         english_keywords = self.keywords.get("english", [])
         for keyword in english_keywords:
+            print(f"   Fetching: {keyword}")
             articles = self._fetch_keyword(
                 keyword,
                 self.rss_sources.get("google_news_global", ""),
@@ -100,6 +102,7 @@ class NewsFetcher:
         # Fetch Japanese articles
         japanese_keywords = self.keywords.get("japanese", [])
         for keyword in japanese_keywords:
+            print(f"   Fetching: {keyword}")
             articles = self._fetch_keyword(
                 keyword,
                 self.rss_sources.get("google_news_japan", ""),
@@ -139,28 +142,40 @@ class NewsFetcher:
         articles = []
 
         try:
-            # Fetch and parse the RSS feed
-            feed = feedparser.parse(rss_url)
+            # Create request with user agent
+            req = urllib.request.Request(
+                rss_url,
+                headers={"User-Agent": "Mozilla/5.0 (compatible; AirMobilityNewsBot/1.0)"}
+            )
 
-            if feed.bozo and feed.bozo_exception:
-                print(f"Warning: Feed parsing issue for '{keyword}': {feed.bozo_exception}")
+            # Fetch the RSS feed
+            with urllib.request.urlopen(req, context=self.ssl_context, timeout=30) as response:
+                xml_content = response.read().decode("utf-8")
 
-            for entry in feed.entries:
-                article = self._parse_entry(entry, keyword, language)
+            # Parse XML
+            root = ET.fromstring(xml_content)
+
+            # Find all items (RSS format)
+            for item in root.findall(".//item"):
+                article = self._parse_item(item, keyword, language)
                 if article:
                     articles.append(article)
 
+        except urllib.error.URLError as e:
+            print(f"     Network error for '{keyword}': {e}")
+        except ET.ParseError as e:
+            print(f"     XML parsing error for '{keyword}': {e}")
         except Exception as e:
-            print(f"Error fetching feed for '{keyword}': {e}")
+            print(f"     Error fetching feed for '{keyword}': {e}")
 
         return articles
 
-    def _parse_entry(self, entry: dict, keyword: str, language: str) -> Optional[Article]:
+    def _parse_item(self, item: ET.Element, keyword: str, language: str) -> Optional[Article]:
         """
-        Parse a feed entry into an Article object.
+        Parse an RSS item into an Article object.
 
         Args:
-            entry: Feed entry dictionary from feedparser.
+            item: XML Element representing an RSS item.
             keyword: The keyword that matched this entry.
             language: Language code.
 
@@ -169,12 +184,14 @@ class NewsFetcher:
         """
         try:
             # Extract title
-            title = entry.get("title", "").strip()
+            title_elem = item.find("title")
+            title = title_elem.text.strip() if title_elem is not None and title_elem.text else ""
             if not title:
                 return None
 
-            # Extract URL (Google News uses a redirect URL)
-            url = entry.get("link", "")
+            # Extract URL
+            link_elem = item.find("link")
+            url = link_elem.text.strip() if link_elem is not None and link_elem.text else ""
             if not url:
                 return None
 
@@ -186,18 +203,19 @@ class NewsFetcher:
                     title = parts[0].strip()
                     source = parts[1].strip()
 
-            # If source not in title, try to get from feed entry
+            # If source not in title, try to get from source element
             if not source:
-                source_info = entry.get("source", {})
-                source = source_info.get("title", "Unknown")
+                source_elem = item.find("source")
+                source = source_elem.text.strip() if source_elem is not None and source_elem.text else "Unknown"
 
             # Parse published date
-            published_date = self._parse_date(entry)
+            published_date = self._parse_date(item)
             if not published_date:
                 published_date = datetime.now(timezone.utc)
 
-            # Extract snippet/summary
-            snippet = entry.get("summary", "")
+            # Extract snippet/description
+            desc_elem = item.find("description")
+            snippet = desc_elem.text.strip() if desc_elem is not None and desc_elem.text else ""
             # Clean HTML tags from snippet
             snippet = re.sub(r"<[^>]+>", "", snippet).strip()
             # Limit snippet length
@@ -215,41 +233,36 @@ class NewsFetcher:
             )
 
         except Exception as e:
-            print(f"Error parsing entry: {e}")
+            print(f"     Error parsing item: {e}")
             return None
 
-    def _parse_date(self, entry: dict) -> Optional[datetime]:
+    def _parse_date(self, item: ET.Element) -> Optional[datetime]:
         """
-        Parse the published date from a feed entry.
+        Parse the published date from an RSS item.
 
         Args:
-            entry: Feed entry dictionary.
+            item: XML Element representing an RSS item.
 
         Returns:
             datetime object or None.
         """
-        # Try published_parsed first
-        if entry.get("published_parsed"):
+        # Try pubDate first (standard RSS)
+        pub_date_elem = item.find("pubDate")
+        if pub_date_elem is not None and pub_date_elem.text:
             try:
-                return datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)
+                return parsedate_to_datetime(pub_date_elem.text)
             except Exception:
                 pass
 
-        # Try updated_parsed
-        if entry.get("updated_parsed"):
-            try:
-                return datetime(*entry.updated_parsed[:6], tzinfo=timezone.utc)
-            except Exception:
-                pass
-
-        # Try parsing from string
-        date_str = entry.get("published") or entry.get("updated")
-        if date_str:
-            try:
-                from dateutil import parser
-                return parser.parse(date_str)
-            except Exception:
-                pass
+        # Try dc:date (Dublin Core)
+        for ns in ["dc", "{http://purl.org/dc/elements/1.1/}"]:
+            date_elem = item.find(f"{ns}date")
+            if date_elem is not None and date_elem.text:
+                try:
+                    # ISO format
+                    return datetime.fromisoformat(date_elem.text.replace("Z", "+00:00"))
+                except Exception:
+                    pass
 
         return None
 
