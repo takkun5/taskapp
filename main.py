@@ -18,6 +18,7 @@ from dotenv import load_dotenv
 from src.fetcher import NewsFetcher, Article
 from src.processor import AIProcessor
 from src.reporter import ReportGenerator
+from src.mailer import EmailSender
 
 
 def generate_demo_articles() -> list[Article]:
@@ -201,6 +202,11 @@ def main():
         action="store_true",
         help="Run in demo mode with sample data (no network required)"
     )
+    parser.add_argument(
+        "--email",
+        action="store_true",
+        help="Send report via email after generation"
+    )
 
     args = parser.parse_args()
 
@@ -301,6 +307,16 @@ def main():
 
     # Print console summary
     print(reporter.generate_console_summary(articles))
+
+    # Send email if requested
+    if args.email:
+        print("\n📧 Sending email report...")
+        mailer = EmailSender(config)
+        if mailer.is_configured():
+            mailer.send_report(articles, ai_enabled=ai_available)
+        else:
+            print("⚠️  Email not configured. Set SMTP credentials in .env file.")
+            print("   Required: SMTP_USER, SMTP_PASSWORD")
 
     print("🎉 Done!")
 

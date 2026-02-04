@@ -62,3 +62,17 @@ categories:
   - "規制"
   - "ビジネス"
   - "その他"
+
+# Email settings
+email:
+  # Enable email notifications
+  enabled: true
+  # SMTP server settings (can be overridden by environment variables)
+  smtp_server: "smtp.gmail.com"
+  smtp_port: 587
+  use_tls: true
+  # Sender address (uses SMTP_USER if not set)
+  from_address: ""
+  # Recipient email addresses
+  to_addresses:
+    - "takuya0215sai@gmail.com"
